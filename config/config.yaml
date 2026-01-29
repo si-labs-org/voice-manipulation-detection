@@ -1,0 +1,216 @@
+
+project:
+  name: "voice_manipulation_detection"
+  version: "0.1.0"
+  description: "Detection de manipulation de voix via RNN et Transformers"
+  seed: 42
+  device: "cuda"  # cuda, cpu, mps
+  num_workers: 4
+
+# Paths (adapted for Colab)
+paths:
+  # Google Drive paths (modify for your setup)
+  drive_root: "/content/drive/MyDrive/voice_manipulation_detection"
+  data_root: "${paths.drive_root}/data"
+  models_root: "${paths.drive_root}/models"
+  experiments_root: "${paths.drive_root}/experiments"
+
+  # Data subdirectories
+  raw_data: "${paths.data_root}/raw/ASVspoof2019"
+  processed_data: "${paths.data_root}/processed"
+  metadata: "${paths.data_root}/metadata"
+
+  # Output directories
+  checkpoints: "${paths.models_root}/checkpoints"
+  final_models: "${paths.models_root}/final"
+  logs: "${paths.experiments_root}/logs"
+  figures: "${paths.experiments_root}/figures"
+
+# Dataset configuration
+data:
+  dataset_name: "ASVspoof2019"
+  task: "LA"  # Logical Access (LA) or Physical Access (PA)
+
+  # Audio parameters
+  sample_rate: 16000
+  audio_duration: 4.0  # seconds
+  max_length: 64000  # samples (4s * 16kHz)
+
+  # Train/val/test splits
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+  # Class balance
+  balance_classes: true
+
+  # Data augmentation
+  augmentation:
+    enabled: true
+    techniques:
+      - time_stretch: {rate: [0.9, 1.1]}
+      - pitch_shift: {n_steps: [-2, 2]}
+      - add_gaussian_noise: {amplitude: 0.005}
+      - time_mask: {max_mask_size: 0.1}
+
+# Preprocessing configuration
+preprocessing:
+  feature_type: "mfcc"  # mfcc, mel_spectrogram, raw_waveform, lfcc
+
+  # MFCC parameters
+  n_mfcc: 40
+  n_fft: 512
+  hop_length: 160
+  win_length: 400
+  n_mels: 80
+  fmin: 0
+  fmax: 8000
+
+  # Normalization
+  normalize: true
+  normalization_type: "instance"  # instance, batch, global
+
+  # Feature processing
+  delta: true  # Add delta features
+  delta_delta: true  # Add delta-delta features
+
+# Model configuration
+model:
+  architecture: "transformer"  # rnn, lstm, gru, transformer, conformer
+
+  # Input dimensions (automatically set based on preprocessing)
+  input_dim: 40  # n_mfcc (or feature dimension)
+  seq_length: 400  # time steps after preprocessing
+
+  # Common parameters
+  hidden_dim: 256
+  num_layers: 6
+  dropout: 0.3
+  activation: "relu"  # relu, gelu, swish
+
+  # RNN-specific
+  rnn:
+    bidirectional: true
+    rnn_type: "lstm"  # lstm, gru
+
+  # Transformer-specific
+  transformer:
+    num_heads: 8
+    dim_feedforward: 1024
+    attention_dropout: 0.1
+    use_positional_encoding: true
+
+  # Output
+  num_classes: 2  # genuine vs spoofed
+  output_activation: null  # null for logits, 'sigmoid' for probabilities
+
+# Training configuration
+training:
+  # Optimization
+  batch_size: 64
+  num_epochs: 100
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  gradient_clip: 1.0
+
+  # Optimizer
+  optimizer:
+    type: "adamw"  # adam, adamw, sgd
+    betas: [0.9, 0.999]
+    eps: 1e-08
+
+  # Learning rate scheduler
+  scheduler:
+    type: "cosine"  # cosine, step, plateau, onecycle
+    warmup_epochs: 5
+    min_lr: 1e-07
+    # Step scheduler
+    step_size: 30
+    gamma: 0.1
+    # Plateau scheduler
+    patience: 10
+    factor: 0.5
+
+  # Loss function
+  loss:
+    type: "cross_entropy"  # cross_entropy, focal_loss, weighted_ce
+    label_smoothing: 0.1
+    # Focal loss
+    gamma: 2.0
+    alpha: 0.25
+
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 15
+    min_delta: 0.0001
+    monitor: "val_loss"  # val_loss, val_eer, val_accuracy
+
+  # Checkpointing
+  checkpoint:
+    save_best: true
+    save_frequency: 5  # epochs
+    monitor: "val_eer"  # metric to monitor
+    mode: "min"  # min or max
+
+  # Mixed precision training
+  use_amp: true  # Automatic Mixed Precision
+
+# Evaluation configuration
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - eer  # Equal Error Rate (primary metric for spoofing)
+    - auc_roc
+
+  # EER calculation
+  eer:
+    n_thresholds: 1000
+
+  # Save predictions
+  save_predictions: true
+  save_attention_weights: true  # For transformers
+
+# Logging configuration
+logging:
+  # Console logging
+  console_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+
+  # File logging
+  log_to_file: true
+  log_file: "${paths.logs}/training.log"
+
+  # TensorBoard
+  tensorboard:
+    enabled: true
+    log_dir: "${paths.logs}/tensorboard"
+
+  # Weights & Biases
+  wandb:
+    enabled: false  # Set to true if using W&B
+    project: "voice-manipulation-detection"
+    entity: null  # Your W&B username
+    tags: ["asvspoof2019", "transformer"]
+
+  # Logging frequency
+  log_interval: 10  # batches
+  val_interval: 1  # epochs
+
+# Reproducibility
+reproducibility:
+  deterministic: true
+  benchmark: false  # Set to true for faster training (less reproducible)
+
+# Inference configuration
+inference:
+  batch_size: 128
+  tta:  # Test-Time Augmentation
+    enabled: false
+    n_augmentations: 5
+
+  # Output format
+  save_probabilities: true
+  threshold: 0.5  # Classification threshold

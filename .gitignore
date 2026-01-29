@@ -1,0 +1,28 @@
+#Data
+data/external/*
+data/interim/*
+data/processed/*
+!data/**/README.md
+
+# Models
+models/checkpoints/*
+models/final/*.pth
+!models/**/README.md
+
+# Experiments
+experiments/runs/*
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.Python
+venv/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
