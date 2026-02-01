@@ -1,28 +1,14 @@
-#Data
-data/external/*
-data/interim/*
-data/processed/*
-!data/**/README.md
 
-# Models
-models/checkpoints/*
-models/final/*.pth
-!models/**/README.md
+# Ignorer les données (TRES IMPORTANT)
+data/
+data/raw/
+data/processed/
 
-# Experiments
-experiments/runs/*
-*.log
-
-# Python
+# Ignorer les fichiers temporaires Python
 __pycache__/
-*.py[cod]
-.Python
-venv/
-.pytest_cache/
-
-# Jupyter
+*.pyc
 .ipynb_checkpoints/
 
-# IDE
-.vscode/
-.idea/
+# Ignorer les logs
+*.log
+experiments/
