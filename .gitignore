@@ -1,14 +1,40 @@
 
-# Ignorer les données (TRES IMPORTANT)
+# ---------------------------------------------------------
+# 1. DATA (Sécurité Maximale - Bloque les 20 Go)
+# ---------------------------------------------------------
 data/
 data/raw/
 data/processed/
+data/external/
+data/interim/
 
-# Ignorer les fichiers temporaires Python
+# ---------------------------------------------------------
+# 2. MODELS (On ne partage que les modèles finaux, pas les essais)
+# ---------------------------------------------------------
+models/checkpoints/
+*.pth
+# Sauf si tu veux partager un modèle final spécifique, tu pourras forcer l'ajout
+
+# ---------------------------------------------------------
+# 3. EXPERIMENTS & LOGS
+# ---------------------------------------------------------
+experiments/runs/
+*.log
+wandb/
+
+# ---------------------------------------------------------
+# 4. PYTHON (Fichiers temporaires générés par le système)
+# ---------------------------------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+.Python
+venv/
+.pytest_cache/
 .ipynb_checkpoints/
 
-# Ignorer les logs
-*.log
-experiments/
+# ---------------------------------------------------------
+# 5. IDE (Configuration personnelle VS Code / PyCharm)
+# ---------------------------------------------------------
+.vscode/
+.idea/
+*.swp
