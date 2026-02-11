@@ -9,19 +9,23 @@ project:
 
 paths:
   drive_root: "/content/drive/MyDrive/voice-manipulation-detection"
-  data_root: "${paths.drive_root}/data"
-  models_root: "${paths.drive_root}/models"
-  experiments_root: "${paths.drive_root}/experiments"
-  raw_data: "${paths.data_root}/raw/ASVspoof2019/LA/LA"
-  processed_data: "${paths.data_root}/processed"
-  metadata: "${paths.data_root}/metadata"
-  checkpoints: "${paths.models_root}/checkpoints"
-  final_models: "${paths.models_root}/final"
-  logs: "${paths.experiments_root}/logs"
-  figures: "${paths.experiments_root}/figures"
+  data_root: "/content/drive/MyDrive/voice-manipulation-detection/data"
+  models_root: "/content/drive/MyDrive/voice-manipulation-detection/models"
+  experiments_root: "/content/drive/MyDrive/voice-manipulation-detection/experiments"
+  
+  # Sous-dossiers
+  raw_data: "/content/drive/MyDrive/voice-manipulation-detection/data/raw/ASVspoof2019/LA/LA"
+  processed_data: "/content/drive/MyDrive/voice-manipulation-detection/data/processed"
+  metadata: "/content/drive/MyDrive/voice-manipulation-detection/data/metadata"
+  checkpoints: "/content/drive/MyDrive/voice-manipulation-detection/models/checkpoints"
+  final_models: "/content/drive/MyDrive/voice-manipulation-detection/models/final"
+  logs: "/content/drive/MyDrive/voice-manipulation-detection/experiments/logs"
+  figures: "/content/drive/MyDrive/voice-manipulation-detection/experiments/figures"
 
 data:
   dataset_name: "ASVspoof2019"
+  subset_fraction: 0.1    # MODE TURBO (10%)
+  debug_mode: true        # Activé
   task: "LA"
   sample_rate: 16000
   audio_duration: 4.0
