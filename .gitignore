@@ -38,3 +38,11 @@ venv/
 .vscode/
 .idea/
 *.swp
+*.pt
+*.pth
+models/checkpoints/
+experiments/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
