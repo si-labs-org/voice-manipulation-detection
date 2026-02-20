@@ -1,42 +1,33 @@
-"""Generate TTS attacks using edge-tts (Microsoft voices, online)."""
 import asyncio
+import os
+import numpy as np
 import edge_tts
 import soundfile as sf
-import numpy as np
 import librosa
-import os
 
 SAMPLE_RATE = 16000
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 async def generate_tts(text, output_path, voice='en-US-AriaNeural'):
-    """Generate TTS and resample to 16kHz."""
-    try:
-        # Generate TTS to temporary file
-        temp_wav = output_path.replace('.wav', '_temp.wav')
-        communicate = edge_tts.Communicate(text=text, voice=voice, rate='-10%')
-        await communicate.save(temp_wav)
+    temp_wav = output_path.replace('.wav', '_temp.wav')
+    communicate = edge_tts.Communicate(text=text, voice=voice, rate='-10%')
+    await communicate.save(temp_wav)
 
-        # Read and resample
-        audio, sr = sf.read(temp_wav)
-        if len(audio.shape) > 1:
-            audio = audio.mean(axis=1)
+    audio, sr = sf.read(temp_wav)
+    if len(audio.shape) > 1:
+        audio = audio.mean(axis=1)
 
-        if sr != SAMPLE_RATE:
-            audio = librosa.resample(audio, orig_sr=sr, target_sr=SAMPLE_RATE)
+    if sr != SAMPLE_RATE:
+        audio = librosa.resample(audio, orig_sr=sr, target_sr=SAMPLE_RATE)
 
-        # Normalize
-        max_val = np.max(np.abs(audio))
-        if max_val > 0:
-            audio = audio / max_val * 0.95
+    max_val = np.max(np.abs(audio))
+    if max_val > 0:
+        audio = audio / max_val * 0.95
 
-        sf.write(output_path, audio, SAMPLE_RATE)
-        os.remove(temp_wav)
-        print(f"✅ {output_path}")
-        return True
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        return False
+    sf.write(output_path, audio, SAMPLE_RATE)
+    os.remove(temp_wav)
+    print(f"Generated: {output_path}")
+    return True
 
 async def main():
     phrases = [
@@ -47,14 +38,11 @@ async def main():
         "Good morning, how can I help you today?"
     ]
 
-    print("Generating TTS attack samples...")
     for i, phrase in enumerate(phrases, 1):
         output = os.path.join(OUTPUT_DIR, f'tts_attack_{i}.wav')
         await generate_tts(phrase, output)
 
-    print(f"\n✅ Generated {len(phrases)} TTS samples in {OUTPUT_DIR}")
-    print("Load these files in the app with 'LOAD FILE' button to test spoof detection!")
+    print(f"Generated {len(phrases)} TTS samples in {OUTPUT_DIR}")
 
 if __name__ == '__main__':
     asyncio.run(main())
-

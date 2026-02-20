@@ -1,7 +1,3 @@
-
-# ---------------------------------------------------------
-# AUDIO FILES (Test recordings - keep local only)
-# ---------------------------------------------------------
 *.wav
 *.mp3
 *.flac
@@ -9,47 +5,27 @@
 *.m4a
 *.aac
 *.aiff
-data/
-data/raw/
-data/processed/
-data/external/
-data/interim/
+*.opus
+*.wma
 
-# ---------------------------------------------------------
-# 2. MODELS (On ne partage que les modèles finaux, pas les essais)
-# ---------------------------------------------------------
-models/checkpoints/
+*.pt
 *.pth
-# Sauf si tu veux partager un modèle final spécifique, tu pourras forcer l'ajout
 
-# ---------------------------------------------------------
-# 3. EXPERIMENTS & LOGS
-# ---------------------------------------------------------
-experiments/runs/
-*.log
-wandb/
+data/
 
-# ---------------------------------------------------------
-# 4. PYTHON (Fichiers temporaires générés par le système)
-# ---------------------------------------------------------
 __pycache__/
 *.py[cod]
+*.pyc
 .Python
 venv/
 .pytest_cache/
 .ipynb_checkpoints/
+*.egg-info/
 
-# ---------------------------------------------------------
-# 5. IDE (Configuration personnelle VS Code / PyCharm)
-# ---------------------------------------------------------
 .vscode/
 .idea/
 *.swp
-*.pt
-*.pth
-models/checkpoints/
+
 experiments/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-*.egg-info/
+wandb/
+*.log
