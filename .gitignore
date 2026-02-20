@@ -1,7 +1,14 @@
 
 # ---------------------------------------------------------
-# 1. DATA (Sécurité Maximale - Bloque les 20 Go)
+# AUDIO FILES (Test recordings - keep local only)
 # ---------------------------------------------------------
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.aac
+*.aiff
 data/
 data/raw/
 data/processed/
